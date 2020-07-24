@@ -1,8 +1,346 @@
-<html>
-  <head>
-    <title>Face expression recognition</title>
-  </head>
-  <body>
-    <img id="bg" width=1200px height=900px src="{{ url_for('video_feed') }}">
-  </body>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS-->
+        <link rel="stylesheet" href= "{{ url_for('static', filename='css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href= "{{ url_for('static', filename='css/mdb.min.css') }}">
+
+        <!-- Font Awesome-->
+        <!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css"> -->
+        
+        <!-- Custom CSS -->
+        <link rel= "stylesheet" href= "{{ url_for('static', filename='css/style.css') }}">
+        <title>Facial Expression Detection</title>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand" href="/">Facial Expression Detection</a>
+        </nav>
+
+        <div class="jumbotron m-4">
+            <div class="row">
+                <div class="col-12 col-lg-6">
+                    <div class="card item-container">
+                        <img class="img-fluid" src="{{url_for('static', filename='images/image-placeholder.png')}}">
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6 d-flex justify-content-center align-items-center">
+                    <div class="d-flex flex-column">
+                        <div class="row">
+                            <div class="col form-group">
+                                <!-- Select an image-->
+                                <label for="select-image">Select Image</label>
+                                <select id="select-image" class="control-elem form-control">
+                                    <option value="none" selected>None Selected</option>
+                                    <option value="Cersei.jpg">Cersei</option>
+                                    <option value="Chandler.jpg">Chandler</option>
+                                    <option value="Dolores.jpg">Dolores</option>
+                                    <option value="Elaine.jpg">Elaine</option>
+                                    <option value="Elliot.jpg">Elliot</option>   
+                                    <option value="Michael.jpg">Michael</option>
+                                    <option value="Walter.jpg">Walter</option>
+                                </select>
+                            </div>
+                            <div class="col form-group">
+                                <!-- Select an image-->
+                                <label for="select-video">Select Video</label>
+                                <select id="select-video" class="control-elem form-control">
+                                    <option value="none" selected>None Selected</option>
+                                    <option value="B0ouAnmsO1Y">Video 1</option>
+                                    <option value="embYkODkzcs">Video 2</option>
+                                    <option value="9z8WPDe8uDg">Video 3</option>
+                                </select>
+                            </div>
+                        </div>
+                        <span class="text-center my-4">Or</span>
+                        
+                        <!-- Upload image input-->
+                        <div class="input-group control-elem">
+                            <input type="file" id="upload" name="image" class="form-control border-0">
+                            <label id="upload-label" for="upload">Upload Image</label>
+                        </div>
+                        <div id="invalid-file" style="display: none;"></div>
+                        <span class="text-center my-4">Or</span>
+                        
+                        <div class="input-group mb-3">
+                            <input type="text" id="yt-url" class="control-elem form-control" placeholder="Enter YouTube URL..." style="cursor: text;">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-indigo url-btn m-0" type="button">Start</button>
+                            </div>
+                            <div id="invalid-url" style="display: none;">
+                                Please provide a valid youtube link.
+                            </div>
+                        </div>
+                        <!-- Start camera -->
+                        <!-- <button type="button" class="start-camera control-elem btn">Start Camera</button> -->
+                    </div>
+                </div>
+                
+                
+                <!-- Video Details Modal -->
+                <div class="modal fade right" id="videoDetailsModal" tabindex="-1" role="dialog" aria-labelledby="videoDetailsModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-side modal-bottom-right" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="videoDetailsModalLabel">Video Details</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body"></div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-sm btn-indigo" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- ./Video Details Modal -->
+            </div>
+        </div>
+
+        <!-- Jquery & Bootstrap JS -->
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>    
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+        
+        <script type="text/javascript">
+
+            var input = document.getElementById('upload');
+            var infoArea = document.getElementById('upload-label');
+            
+            input.addEventListener('change', showFileName);
+            function showFileName( event ) {
+                var input = event.srcElement;
+                var fileName = input.files[0].name;
+                infoArea.textContent = 'File name: ' + fileName;
+            }
+            
+            function closeCamera() {
+                // close camera if it is not closed by the user
+                $('.start-camera').text(function(i, text){
+                    if (text === "Start Camera"){
+                        // camera is already closed
+                        return;
+                    }
+                    window.stop()
+                    this.textContent = "Start Camera";    
+                })    
+            }
+            
+            function resetUploadLabel() {
+                /* another button is clicked
+                hence, resetting the label for upload field */ 
+                if ($("#upload-label").text() != "Upload Image"){
+                    $("#upload-label").text("Upload Image");
+                }
+            }
+            
+            function resetVideoLinkLabel() {
+                /* another button is clicked or video is stopped
+                hence, resetting the input field youtube url */ 
+                if ($("#yt-url").val() != ""){
+                    $("#yt-url").val("");
+                    $(".url-btn").text("Start");
+                    $("#invalid-url").hide();
+                }
+            }
+            
+            function resetSelectImageLabel() {
+                /* resetting to default select option
+                this makes the onchange event work properly */ 
+                if ($('#select-video option:selected').val() !== "none") {
+                    $('#select-image option:eq(0)').prop('selected', true);
+                }
+            }
+            
+            function resetSelectVideoLabel() {
+                /* resetting to default select option
+                this makes the onchange event work properly */ 
+                if ($('#select-video option:selected').val() !== "none") {
+                    $('#select-video option:eq(0)').prop('selected', true);
+                }
+            }
+            
+            function loadImage(image, uploaded=false){
+                let urlSegment = "static";
+                let flag = "";
+                if (uploaded) {
+                    urlSegment = "uploads";
+                    flag = "/uploaded";
+                }
+                $(".item-container").html('<img class="img-fluid" src="/' + urlSegment + '/images/' + image + '">');
+                $(".item-container").css('opacity', '0.5').append('<div class="loader"></div>');
+                var randomInterval = Math.floor(Math.random() * (1000 - 200)) + 200;
+                setTimeout(function(){
+                    $(".item-container").html('<img class="img-fluid" src="/annotate_image/' + image + flag + '">').css('opacity', '1');
+                    $(".item-container").append('<div class="time">' + randomInterval + 'ms</div>');
+                }, randomInterval);
+            }
+            
+            function getVideoDetails(videoId) {
+                $.getJSON('https://www.googleapis.com/youtube/v3/videos?key=AIzaSyDxId1K5t3-NBW-A626Z-NPgZpQ8Oi1EtA&part=snippet&id='+videoId ,function(data) {
+                    var video = data["items"][0]["snippet"];
+                    var title = video["title"];
+                    var description = video["description"];
+                    
+                    var formattedDate = new Date(video["publishedAt"]);
+                    var d = formattedDate.getDate();
+                    var m =  formattedDate.getMonth();
+                    m++;  // JavaScript months are 0-11
+                    var y = formattedDate.getFullYear();
+                    var publishedAt = "Published on " + d + "-" + m + "-" + y;
+                    
+                    var thumbnail = video["thumbnails"]["high"]["url"];
+                    var detailsTemplate = 
+                        '<div class="card">' + 
+                            '<img class="img-fluid" src="' + thumbnail + '" class="card-img-top" alt="Video Thumbnail">' +
+                            '<div class="card-body">' +
+                                '<h5 class="card-title">' + title + '</h5>' +
+                                '<p class="card-text">' + description + '</p>' +
+                            '</div>' +
+                            '<div class="card-footer">' +
+                                '<small class="text-muted">' + publishedAt + '</small>' +
+                            '</div>' +
+                        '</div>';
+                    
+                    $(".modal-body").html(detailsTemplate);
+                    $('#videoDetailsModal').modal('show');
+                });
+            }
+            
+            $(function() {
+                
+                /*
+                    SELECT IMAGE
+                */
+                $("#select-image").change(function(){
+                    // closeCamera();
+                    var selectedImage = $(this).children("option:selected").val();
+                    if(selectedImage === "none"){
+                        $(".item-container").html('<img class="img-fluid" src="/static/images/image-placeholder.png">');
+                    } else {
+                        window.stop();
+                        loadImage(selectedImage);
+                    }
+                    resetUploadLabel();
+                    resetSelectVideoLabel();
+                    resetVideoLinkLabel();
+                });
+            
+                /*
+                    SELECT VIDEO
+                */
+                $("#select-video").change(function(){
+                    // closeCamera();
+                    var selectedVideo = $(this).children("option:selected").val();
+                    if(selectedVideo === "none"){
+                        $(".item-container").html('<img class="img-fluid" src="/static/images/image-placeholder.png">');
+                    } else {
+                        window.stop();
+                        $(".item-container").html('<img class="img-fluid" src="/video_feed/' + selectedVideo + '">');
+                        getVideoDetails(selectedVideo);            
+                    }
+                    resetUploadLabel();
+                    resetSelectImageLabel();
+                    resetVideoLinkLabel();
+                });
+            
+            
+                /*
+                    UPLOAD IMAGE 
+                */
+                $("#upload").change(function(){
+                    // closeCamera();
+                    window.stop();
+            
+                    var form_data = new FormData();
+                    form_data.append("image", document.getElementById('upload').files[0]);
+                    
+                    $.ajax({
+                        url: '/uploadimage',
+                        dataType: 'json',
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        data: form_data,
+                        type: 'post',
+                        success: function (response) {
+                            $("#invalid-file").hide();
+                            loadImage(response.image, true);
+                        },
+                        error: function (response) {
+                            $("#invalid-file").html(response.responseJSON.message).show();
+                        }
+                    });
+            
+                    resetSelectImageLabel();
+                    resetSelectVideoLabel();
+                    resetVideoLinkLabel();
+                });
+            
+                // resetting the value so that user can upload the same image again
+                $("#upload").click(function(){
+                    $(this).val("");
+                });
+            
+                /*
+                    UPLOAD VIDEO (YouTube URL) 
+                */
+                $(".url-btn").click(function(){
+                    $(this).text(function(i, text){
+                        if (text === "Start"){
+                            window.stop();
+                            var urlFormat = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+                            var url = $('#yt-url').val();
+                            var videoId = (url.match(urlFormat)) ? RegExp.$1 : false;
+                            if (videoId) {
+                                $("#invalid-url").hide();
+                                $(".item-container").html('<img class="img-fluid" src="/video_feed/' + videoId + '">');
+                                getVideoDetails(videoId);
+                            } else {
+                                $("#invalid-url").show();
+                            }
+                            return "Stop";
+                        } else {
+                            resetVideoLinkLabel();
+                            $(".item-container").html('<img class="img-fluid" src="/static/images/image-placeholder.png">');
+                            return "Start";
+                        }
+                    })        
+                    // closeCamera();
+                    resetSelectImageLabel();
+                    resetSelectVideoLabel();
+                    resetUploadLabel();
+                });
+            
+                /*
+                    START CAMERA 
+                */
+                $('.start-camera').click(function(){
+                    $(this).text(function(i, text){
+                        // return text === "Start Camera" ? "Stop Camera" : "Start Camera";
+                        if (text === "Start Camera"){
+                            $(".item-container").html('<img class="img-fluid" src="/video_feed">');
+                            return "Stop Camera";
+                        } else {
+                            window.stop()
+                            $(".item-container").html('<img class="img-fluid" src="/static/images/image-placeholder.png">');
+                            return "Start Camera";
+                        }
+                    })
+                    resetSelectImageLabel();
+                    resetSelectVideoLabel();
+                    resetUploadLabel();
+                    resetVideoLinkLabel();
+                })
+            })
+        </script>
+    </body>
 </html>

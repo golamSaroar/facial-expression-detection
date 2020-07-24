@@ -1,0 +1,85 @@
+#upload {
+    opacity: 0;
+}
+
+#upload-label {
+    position: absolute;
+    top: 50%;
+    left: 1rem;
+    transform: translateY(-50%);
+}
+
+.item-container {
+    width: 500px;
+    height: 500px;
+    margin: 0 auto
+}
+
+.item-container img {
+    height: 500px;
+}
+
+.control-elem {
+    background-color: #fff;
+    min-height: 48px;
+    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
+    border-radius: 1rem;
+    cursor: pointer;
+}
+
+.input-group-append .url-btn {
+    border-top-right-radius: 1rem !important;
+    border-bottom-right-radius: 1rem !important;
+    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
+}
+
+#invalid-url, #invalid-file {
+    width: 100%;
+    margin-top: .25rem;
+    font-size: 90%;
+    color: #dc3545;
+}
+
+.modal-dialog{
+    overflow-y: initial !important
+}
+
+.modal-body{
+    max-height: 550px !important;
+    overflow-y: auto !important;
+}
+
+.loader {
+    position: absolute;
+    top: 35%;
+    left: 35%;
+    border-top: 16px solid blue;
+    border-right: 16px solid green;
+    border-bottom: 16px solid red;
+    border-left: 16px solid #F3F3F3;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.time {
+    display: inline-block;
+    width: 120px;
+    padding: 0 10px;
+    margin: 10px auto;
+    font-size: 16px;
+    line-height: 32px;
+    color: white;
+    cursor: pointer;
+    background-color: #3f51b5;
+    border-radius: 16px;
+    -webkit-transition: all .3s linear;
+    transition: all .3s linear;
+    text-align: center;
+}
