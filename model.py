@@ -1,14 +1,6 @@
 from tensorflow.keras.models import model_from_json
-from tensorflow.python.keras.backend import set_session
-import numpy as np
-
 import tensorflow as tf
-
-config = tf.compat.v1.ConfigProto()
-config.gpu_options.per_process_gpu_memory_fraction = 0.15
-session = tf.compat.v1.Session(config=config)
-set_session(session)
-
+import numpy as np
 
 class FacialExpressionModel(object):
 
@@ -29,7 +21,5 @@ class FacialExpressionModel(object):
         #self.loaded_model._make_predict_function()
 
     def predict_emotion(self, img):
-        global session
-        set_session(session)
         self.preds = self.loaded_model.predict(img)
         return FacialExpressionModel.EMOTIONS_LIST[np.argmax(self.preds)]
