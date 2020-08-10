@@ -1,4 +1,4 @@
-# Facial Expression Detection App
+# Facial Expression Recognition App
 
 This is a sentiment analysis tool to detect the six basic expressions: happiness, sadness, anger, surprise, fear, and disgust. Such an application can be used in Market Research, for example, to observe user's reaction while interacting with a brand or a product.
 
@@ -10,6 +10,7 @@ There are many ways a user can use this app for emotion recognition:
 #### Future Scope: 
 Webcam feed will be added to the mix. Also, there's room for improvement on the model itself.
 
+![Facial Expression Recognition Demo](facial-expression-recognition.png "Facial Expression Recognition Demo")
 
 ## How do I get set up?
 
